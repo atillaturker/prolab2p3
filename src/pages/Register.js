@@ -45,12 +45,22 @@ export const Register = () => {
       );
       if (userCredential.user) {
         const newUser = userCredential.user;
-        const usersCollectionRef = collection(FIREBASE_DB, "users");
-        await addDoc(usersCollectionRef, {
-          email: newUser.email,
-          password: password,
-          userType: type,
-        });
+        const doctorCollectionRef = collection(FIREBASE_DB, "doctors");
+        const patiensCollectionRef = collection(FIREBASE_DB, "patients");
+        if (type === "doktor") {
+          await addDoc(doctorCollectionRef, {
+            email: newUser.email,
+            uid: newUser.uid,
+            type: "doktor",
+          });
+        } else {
+          // Hasta
+          await addDoc(patiensCollectionRef, {
+            email: newUser.email,
+            uid: newUser.uid,
+            type: "hasta",
+          });
+        }
         setIsModalOpen(true); // Open the modal
       }
     } catch (error) {

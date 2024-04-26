@@ -7,23 +7,64 @@ import {
   Input,
   Text,
 } from "@chakra-ui/react";
-import React from "react";
-import { Link } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { FIREBASE_AUTH } from "../firebaseConfig";
 
 export const DoktorGiris = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        FIREBASE_AUTH,
+        email,
+        password
+      );
+      if (userCredential.user) {
+        console.log("Signed in successfully");
+        navigate("/doktorDashboard");
+      } else {
+      }
+    } catch (error) {
+      console.error("Error signing in:", error);
+    }
+  };
   return (
     <ChakraProvider>
       <Box maxW="md" mx="auto" mt="150px" p={8} rounded="lg" boxShadow="lg">
         <form>
           <FormControl id="email" isRequired>
             <FormLabel>Email address</FormLabel>
-            <Input type="email" />
+            <Input
+              value={email}
+              onChange={(event) => {
+                setEmail(event.target.value);
+              }}
+              type="email"
+            />
           </FormControl>
           <FormControl id="password" mt={4} isRequired>
             <FormLabel>Password</FormLabel>
-            <Input type="password" />
+            <Input
+              value={password}
+              onChange={(event) => {
+                setPassword(event.target.value);
+              }}
+              type="password"
+            />
           </FormControl>
-          <Button colorScheme="teal" type="submit" width="full" mt={4}>
+          <Button
+            onClick={handleSubmit}
+            colorScheme="teal"
+            type="submit"
+            width="full"
+            mt={4}
+          >
             Sign In
           </Button>
           <Text mt={4} display="flex" alignItems="center">
